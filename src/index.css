@@ -1,0 +1,212 @@
+@import "tailwindcss";
+
+/* ─── Design Tokens ──────────────────────────────────────────── */
+:root {
+  --bg-base:     #09090b;
+  --bg-panel:    #18181b;
+  --bg-surface:  #27272a;
+  --border:      #3f3f46;
+  --border-sub:  #27272a;
+  --text-primary: #f4f4f5;
+  --text-muted:   #a1a1aa;
+  --text-faint:   #52525b;
+  --amber: #f59e0b;
+  --green: #10b981;
+  --red:   #ef4444;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { font-size: 16px; }
+
+body {
+  margin: 0; padding: 0;
+  background-color: var(--bg-base);
+  color: var(--text-primary);
+  font-family: 'Inter', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.font-mono-data { font-family: 'JetBrains Mono', 'Courier New', monospace; }
+
+/* Scanline overlay */
+.scanline-overlay::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent, transparent 3px,
+    rgba(0,0,0,0.05) 3px, rgba(0,0,0,0.05) 4px
+  );
+  pointer-events: none; z-index: 0;
+}
+
+/* Blink cursor */
+@keyframes blink {
+  0%,100% { opacity:1; } 50% { opacity:0; }
+}
+.cursor-blink { animation: blink 1s step-start infinite; }
+
+/* Green status pulse */
+@keyframes pulse-green {
+  0%,100% { box-shadow: 0 0 0 0 rgba(16,185,129,0.6); }
+  50%      { box-shadow: 0 0 0 7px rgba(16,185,129,0); }
+}
+.pulse-green { animation: pulse-green 2s ease-in-out infinite; border-radius: 9999px; }
+
+/* Amber status pulse */
+@keyframes pulse-amber {
+  0%,100% { box-shadow: 0 0 0 0 rgba(245,158,11,0.6); }
+  50%      { box-shadow: 0 0 0 7px rgba(245,158,11,0); }
+}
+.pulse-amber { animation: pulse-amber 1.2s ease-in-out infinite; border-radius: 9999px; }
+
+/* Moving scan beam */
+@keyframes scanbeam {
+  0%   { top: -4px; opacity: 0.8; }
+  100% { top: 100%; opacity: 0;   }
+}
+.scan-beam {
+  position: absolute; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, transparent, rgba(16,185,129,0.85), transparent);
+  animation: scanbeam 2.2s linear infinite;
+}
+
+/* Terminal text flicker */
+@keyframes text-flicker {
+  0%,100% { opacity:1; }
+  92%     { opacity:1; }
+  93%     { opacity:0.65; }
+  94%     { opacity:1; }
+  97%     { opacity:0.85; }
+}
+.terminal-flicker { animation: text-flicker 5s ease-in-out infinite; }
+
+/* Fade in up */
+@keyframes fade-up {
+  from { opacity:0; transform:translateY(14px); }
+  to   { opacity:1; transform:translateY(0);    }
+}
+.fade-up { animation: fade-up 0.45s ease-out both; }
+
+.d-100 { animation-delay: 0.1s; }
+.d-200 { animation-delay: 0.2s; }
+.d-300 { animation-delay: 0.3s; }
+.d-400 { animation-delay: 0.4s; }
+.d-500 { animation-delay: 0.5s; }
+.d-600 { animation-delay: 0.6s; }
+.d-700 { animation-delay: 0.7s; }
+
+/* Processing terminal line slide */
+@keyframes slide-in {
+  from { opacity:0; transform:translateX(-8px); }
+  to   { opacity:1; transform:translateX(0);    }
+}
+.slide-in { animation: slide-in 0.35s ease-out both; }
+
+/* Gauge ring SVG animation */
+@keyframes draw-ring {
+  from { stroke-dashoffset: 283; }
+  to   { stroke-dashoffset: 198; } /* ~30% filled = low risk */
+}
+.gauge-ring {
+  stroke-dasharray: 283;
+  stroke-dashoffset: 283;
+  animation: draw-ring 1.8s cubic-bezier(0.34,1.56,0.64,1) 0.4s forwards;
+}
+
+/* ─── Hardware Buttons ───────────────────────────────────────── */
+.hw-btn {
+  display: inline-flex;
+  align-items: center; justify-content: center; gap: 0.5rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem; font-weight: 700;
+  letter-spacing: 0.13em; text-transform: uppercase;
+  border-radius: 4px; cursor: pointer;
+  transition: all 0.15s ease;
+  border: 1px solid transparent;
+  position: relative; white-space: nowrap;
+}
+.hw-btn:active { transform: translateY(1px); }
+.hw-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+.hw-btn-primary {
+  background: #e4e4e7; color: #09090b;
+  border-color: #a1a1aa;
+  box-shadow: 0 3px 0 #52525b, 0 5px 16px rgba(0,0,0,0.6);
+  padding: 0.85rem 2.5rem;
+}
+.hw-btn-primary:hover:not(:disabled) {
+  background: #ffffff;
+  box-shadow: 0 3px 0 #71717a, 0 8px 24px rgba(0,0,0,0.7);
+}
+.hw-btn-primary:active:not(:disabled) {
+  box-shadow: 0 0 0 #52525b; transform: translateY(3px);
+}
+
+.hw-btn-green {
+  background: rgba(16,185,129,0.1); color: #10b981;
+  border-color: rgba(16,185,129,0.3);
+  box-shadow: 0 2px 0 rgba(16,185,129,0.15);
+  padding: 0.75rem 1.5rem;
+}
+.hw-btn-green:hover:not(:disabled) {
+  background: rgba(16,185,129,0.2);
+  box-shadow: 0 2px 0 rgba(16,185,129,0.25), 0 0 24px rgba(16,185,129,0.18);
+}
+
+.hw-btn-red {
+  background: rgba(239,68,68,0.1); color: #ef4444;
+  border-color: rgba(239,68,68,0.3);
+  box-shadow: 0 2px 0 rgba(239,68,68,0.15);
+  padding: 0.75rem 1.5rem;
+}
+.hw-btn-red:hover:not(:disabled) {
+  background: rgba(239,68,68,0.2);
+  box-shadow: 0 2px 0 rgba(239,68,68,0.25), 0 0 24px rgba(239,68,68,0.18);
+}
+
+.hw-btn-ghost {
+  background: transparent; color: #71717a;
+  border-color: #3f3f46;
+  padding: 0.65rem 1.25rem;
+}
+.hw-btn-ghost:hover:not(:disabled) {
+  background: #27272a; color: #f4f4f5; border-color: #52525b;
+}
+
+/* ─── Panel ──────────────────────────────────────────────────── */
+.panel {
+  background: var(--bg-panel);
+  border: 1px solid var(--border-sub);
+  border-radius: 6px;
+}
+
+.panel-header {
+  display: flex; align-items: center; gap: 0.5rem;
+  padding: 0.6rem 1rem;
+  border-bottom: 1px solid var(--border-sub);
+}
+
+.panel-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.62rem; font-weight: 700;
+  letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--amber);
+}
+
+/* ─── Check Card ─────────────────────────────────────────────── */
+.check-card {
+  background: #0f0f10;
+  border: 1px solid #27272a;
+  border-radius: 6px;
+  padding: 1rem;
+  transition: border-color 0.2s;
+}
+.check-card:hover { border-color: #3f3f46; }
+
+/* ─── Scrollbar ──────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--bg-base); }
+::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 9999px; }
+::-webkit-scrollbar-thumb:hover { background: #52525b; }

@@ -1,0 +1,14 @@
+# Environments
+venv/
+env/
+.env
+
+# Python Caches
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Temp and OS files
+temp_uploads/
+.DS_Store
